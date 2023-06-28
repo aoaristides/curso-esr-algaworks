@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+
+  mysql_db:
+    image: mysql:8
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Tulipa!23
+      MYSQL_DATABASE: algafood
+      MYSQL_PASSWORD: Tulipa!23
+    ports:
+      - "3307:3306"
+    volumes:
+      - .docker/mysql:/var/lib/mysql
