@@ -11,6 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
+
 /**
  * @author aaristides
  */
@@ -18,18 +21,20 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/cozinhas")
 public class CozinhaController {
 
+    @Autowired
     private CozinhaRepository cozinhaRepository;
+
+    @Autowired
     private CadastroCozinhaService cadastroCozinha;
 
-    public CozinhaController(@Autowired CozinhaRepository cozinhaRepository,
-                             @Autowired CadastroCozinhaService cadastroCozinha) {
-        this.cozinhaRepository = cozinhaRepository;
-        this.cadastroCozinha = cadastroCozinha;
+    @GetMapping
+    public List<Cozinha> listar() {
+        return cozinhaRepository.findAll();
     }
 
     @GetMapping("/{cozinhaId}")
     public ResponseEntity<Cozinha> buscar(@PathVariable Long cozinhaId) {
-        var cozinha = cozinhaRepository.findById(cozinhaId);
+        Optional<Cozinha> cozinha = cozinhaRepository.findById(cozinhaId);
 
         if (cozinha.isPresent()) {
             return ResponseEntity.ok(cozinha.get());
@@ -45,13 +50,14 @@ public class CozinhaController {
     }
 
     @PutMapping("/{cozinhaId}")
-    public ResponseEntity<Cozinha> atualizar(@PathVariable Long cozinhaId, @RequestBody Cozinha cozinha) {
-        var cozinhaAtual = cozinhaRepository.findById(cozinhaId);
+    public ResponseEntity<Cozinha> atualizar(@PathVariable Long cozinhaId,
+                                             @RequestBody Cozinha cozinha) {
+        Optional<Cozinha> cozinhaAtual = cozinhaRepository.findById(cozinhaId);
 
         if (cozinhaAtual.isPresent()) {
             BeanUtils.copyProperties(cozinha, cozinhaAtual.get(), "id");
 
-            var cozinhaSalva = cadastroCozinha.salvar(cozinhaAtual.get());
+            Cozinha cozinhaSalva = cadastroCozinha.salvar(cozinhaAtual.get());
             return ResponseEntity.ok(cozinhaSalva);
         }
 
